@@ -5,8 +5,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      SQLPAD_ADMIN: admin
-      SQLPAD_ADMIN_PASSWORD: admin
+      SQLPAD_ADMIN: ${SQLPAD_ADMIN}
+      SQLPAD_ADMIN_PASSWORD: ${SQLPAD_ADMIN_PASSWORD}
     depends_on:
       - trino
 
@@ -31,8 +31,8 @@ services:
       - 31010:31010
       - 32010:32010
     environment:
-      - SERVICES_EXECUTOR_MEMORY=4G
-      - SERVICES_COORDINATOR_MEMORY=4G
+      SERVICES_EXECUTOR_MEMORY: ${DREMIO_EXECUTOR_MEMORY}
+      SERVICES_COORDINATOR_MEMORY: ${DREMIO_COORDINATOR_MEMORY}
 
   nessie:
     image: ghcr.io/projectnessie/nessie
@@ -40,17 +40,17 @@ services:
     ports:
       - "19120:19120"
     environment:
-      - QUARKUS_HTTP_PORT=19120
-      - NESSIE_VERSION_STORE_TYPE=MONGODB2
-      - QUARKUS_MONGODB_CONNECTION_STRING=mongodb://root:example@mongo:27017/nessie?authSource=admin
-      - QUARKUS_MONGODB_DATABASE=nessie
-      - nessie.catalog.default-warehouse=warehouse
-      - nessie.catalog.warehouses.warehouse.location=s3://warehouse/
-      - nessie.catalog.service.s3.default-options.region=us-east-1
-      - nessie.catalog.service.s3.default-options.path-style-access=true
-      - nessie.catalog.service.s3.default-options.access-key=urn:nessie-secret:quarkus:nessie.catalog.secrets.access-key
-      - nessie.catalog.secrets.access-key.name=admin
-      - nessie.catalog.secrets.access-key.secret=admin123
+      QUARKUS_HTTP_PORT: ${NESSIE_PORT}
+      NESSIE_VERSION_STORE_TYPE: ${NESSIE_VERSION_STORE_TYPE}
+      QUARKUS_MONGODB_CONNECTION_STRING: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/nessie?authSource=admin
+      QUARKUS_MONGODB_DATABASE: ${NESSIE_DATABASE}
+      nessie.catalog.default-warehouse: ${NESSIE_DEFAULT_WAREHOUSE}
+      nessie.catalog.warehouses.warehouse.location: ${NESSIE_WAREHOUSE_LOCATION}
+      nessie.catalog.service.s3.default-options.region: ${NESSIE_S3_REGION}
+      nessie.catalog.service.s3.default-options.path-style-access: ${NESSIE_S3_PATH_STYLE_ACCESS}
+      nessie.catalog.service.s3.default-options.access-key: ${NESSIE_S3_ACCESS_KEY}
+      nessie.catalog.secrets.access-key.name: ${NESSIE_SECRET_NAME}
+      nessie.catalog.secrets.access-key.secret: ${NESSIE_SECRET_PASSWORD}
 
   mongo:
     image: mongo:latest
@@ -58,8 +58,8 @@ services:
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - ./mongo-data:/data/db
 
@@ -71,10 +71,10 @@ services:
     environment:
       ME_CONFIG_MONGODB_SERVER: mongo
       ME_CONFIG_MONGODB_PORT: 27017
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
     depends_on:
       - mongo
 
@@ -85,15 +85,19 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_DOMAIN: storage
-      MINIO_REGION: us-east-1
-      MINIO_REGION_NAME: us-east-1
-      MINIO_ROOT_USER: admin
-      MINIO_ROOT_PASSWORD: admin123
+      MINIO_DOMAIN: ${MINIO_DOMAIN}
+      MINIO_REGION: ${MINIO_REGION}
+      MINIO_REGION_NAME: ${MINIO_REGION_NAME}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data --console-address ":9001"
+    volumes:
+      - ./minio-data:/data
 
 volumes:
   mongo-data:
     driver: local
   trino-config:
+    driver: local
+  minio-data:
     driver: local
