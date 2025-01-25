@@ -8,8 +8,9 @@ This repository contains a comprehensive setup for building a modern Data Lakeho
 2. [Services](#services)
 3. [Getting Started](#getting-started)
 4. [Key Features](#key-features)
-5. [Configuration Details](#configuration-details)
-6. [References](#references)
+5. [Future Scope](#future-scope)
+6. [Configuration Details](#configuration-details)
+7. [References](#references)
 
 ---
 
@@ -166,6 +167,28 @@ This setup provides the following advanced capabilities:
 9. **Cloud-Native Design**
    - S3-compatible object storage via MinIO ensures seamless integration with cloud-based systems.
    - Horizontal scalability with distributed architecture for all services.
+
+---
+
+**Future Scope**
+
+1. **Integration with AWS S3**
+   - Transition MinIO to AWS S3 for production-grade object storage and seamless integration with cloud ecosystems.
+
+2. **Singlestore as an Additional Query Engine**
+   - Incorporate Singlestore as an additional query engine for enhanced performance and real-time analytics capabilities.
+
+3. **Log-Based Change Data Capture (CDC) Integration**
+   - Add support for log-based CDC to enable real-time data ingestion and synchronization across systems.
+
+4. **Infrastructure for Scaling Production Workloads**
+   - Design Kubernetes (K8s)-based infrastructure for orchestrating and scaling services to handle production workloads.
+
+5. **Cost Management**
+   - Implement monitoring and optimization for infrastructure and storage costs, leveraging tools like Prometheus, Grafana, or cloud-native cost analysis tools.
+
+6. **Kubernetes (K8s) Support**
+   - Deploy the entire setup on Kubernetes for robust, scalable, and highly available infrastructure.
 
 ---
 
